@@ -15,8 +15,10 @@ library(deSolve)
 library(lhs)
 library(distributional)
 
-################################################################################
+## Seed for reproducability
+set.seed(1)
 
+################################################################################
 # 2 UI
 ## 2.A Dynamic UI elements
 disttype_tabs_alpha <- tabsetPanel(id = "disttype_alpha",
@@ -165,11 +167,7 @@ page_sidebar(
   withMathJax(),
   inverse = T,
   title = list(tags$img(src = "prefix/UoM_Logo.png", height = 50, width = 50),
-               "Module 3: Deterministic SIRSC Model of Cholera Transmission - Uncertainty Analysis (Multiple Parameter Sampling) (InDev)",
-               ## 2.0 Close app button
-               tags$button(id = "Exit_app", type = "button", class = "btn action-button", 
-                           onclick = "setTimeout(function(){window.close();}, 0);",  # Close browser
-                           icon("circle-xmark"), "Exit App")),
+               "Module 3: Deterministic SIRSC Model of Cholera Transmission - Uncertainty Analysis (Multiple Parameter Sampling) (InDev)"),
   ## 2.1 Slider sidebar
   sidebar = sidebar(
     navset_underline(

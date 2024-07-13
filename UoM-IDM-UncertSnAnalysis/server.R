@@ -1,8 +1,7 @@
 ## 1.1 Parallel computing
 #plan(multisession)
 
-## 1.2 Set seed for reproducability
-set.seed(1)
+
 
 ################################################################################
 
@@ -59,9 +58,6 @@ sirsc.ode <- function(t, state, parameters) {
 #times <- seq(start_date, end_date, by = 1)
 
 function(input, output) {
-  ## 4.X Close app and stop Shiny
-  observe({if (input$Exit_app > 0) stopApp()})
-  
   ## 4.Y UoM Logo
   # Send a pre-rendered image, and don't delete the image after sending it
   output$Logo <- renderImage({list(src = "UoM_Logo.png",
