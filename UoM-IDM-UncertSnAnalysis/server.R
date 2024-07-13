@@ -1,9 +1,21 @@
-## 1.1 Parallel computing
-#plan(multisession)
+# Library loading
+## Shiny packages
+library(shiny)
+library(shinyWidgets)
+## Visualisation packages
+library(dplyr)
+library(tidyr)
+library(ggdist)
+library(ggplot2)
+library(plotly)
+library(patchwork)
+library(bslib)
+## Mathematical packages
+library(deSolve)
+library(lhs)
+library(distributional)
 
-
-
-################################################################################
+################################### SERVER #####################################
 
 # 3 Model
 ## 3.1 Initialise inputs
