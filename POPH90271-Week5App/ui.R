@@ -238,28 +238,70 @@ page_navbar(
   #################### Welcome page ####################
   
   nav_panel(title = "Welcome",
-            h3('Introduction \uD83D\uDC4B'),
-            p(HTML(paste('Hello and welcome to this interactive <i>Shiny</i> App for <b>POPH90271 Infectious Diseases Modelling</b>!'))),
-            p(HTML(paste('Through the Week 5 lectures, we were introduced to the concepts of <i>Uncertainty and Sensitivity Analysis</i>.'))),
-            p(HTML(paste('In this app, we will use an example from the extant literature to gain an <i>intuitive feel</i> for:'))),
-            tags$ul(tags$li(HTML(paste('How models react to changes in parameter and state inputs (<b>sensitivity</b>),'))),
-                    tags$li(HTML(paste('The different approaches with which parameter and state inputs can be sampled (<b>non-informative uncertainty</b>), and'))),
-                    tags$li(HTML(paste('How computational considerations affect feasibility of simulations (<b>implementation efficiency</b>).')))),
-            p(HTML(paste('In <b>Module 1: Parameter Exploration</b>, we introduce a <b>cholera outbreak</b> \uD83E\uDDA0,
-                         and visualise how changing various parameters and state inputs affects the model&apos;s outputs,'))),
-            p(HTML(paste('In <b>Module 2: Single Parameter Sampling </b>, we introduce various probability distributions
-                         (<b>sampling distributions</b> \uD83D\uDCCA) with which we can use to sample a single parameter we are uncertain of.'))),
-            p(HTML(paste('In <b>Module 3: Multiple Parameters</b>, we sample more than one parameter and introduce different
-                         techniques (<b>sampling methods</b> \uD83D\uDD0D) to efficiently explore the sample space.'))),
-            h3('Model description'),
-            p(HTML(paste('Hello!'))),
-            h3('Acknowledgements'),
-            p(HTML(paste('This Shiny app was created in 2024 by <a href="mailto:jaswong@unimelb.edu.au">Mr Jason Wong</a> (MD4/MPH Candidate, The University of Melbourne),
-                         under the supervision of <a href="mailto:patricia.campbell@unimelb.edu.au">Dr Trish Campbell</a> (The Peter Doherty Institute for Infection and Immunity).'))),
-            p(HTML(paste('The model used in this app was adapted from Andrews, J. R., & Basu, S. (2011).
-                         <i>Transmission dynamics and control of cholera in Haiti: an epidemic model</i>. Lancet, 377(9773), 1248–1255.<br>
-                         You can access the original paper <a href="https://doi.org/10.1016/S0140-6736(11)60273-0">here</a>.')))),
-  
+            accordion(
+              multiple = FALSE,
+              accordion_panel('Introduction \uD83D\uDC4B',
+                              p(HTML(paste('Hello and welcome to the <i>Infectious Disease Modelling Uncertainty and Sensitivity Analysis Playground</i>, an interactive <i>Shiny</i> app for <b>POPH90271 Infectious Diseases Modelling</b>!'))),
+                              p(HTML(paste('Through the Week 5 lectures, we were introduced to the concepts of <i>Uncertainty and Sensitivity Analysis</i>.'))),
+                              h4('Learning Objectives'),
+                              p(HTML(paste('In this app, we will use an example from the extant literature to gain an <i>intuitive feel</i> for:'))),
+                              tags$ul(tags$li(HTML(paste('How models react to changes in parameter and state inputs (<b>sensitivity</b>),'))),
+                                      tags$li(HTML(paste('The different approaches with which parameter and state inputs can be sampled (<b>non-informative uncertainty</b>), and'))),
+                                      tags$li(HTML(paste('How computational considerations affect feasibility of simulations (<b>implementation efficiency</b>).<br><br>')))),
+                              h4('App Overview'),
+                              p(HTML(paste('In <b>Module 1: Parameter Exploration</b>, we introduce a <b>cholera outbreak</b> \uD83E\uDDA0,
+                                           and visualise how changing various parameters and state inputs affects the model&apos;s outputs,'))),
+                              p(HTML(paste('In <b>Module 2: Single Parameter Sampling </b>, we introduce various probability distributions
+                                           (<b>sampling distributions</b> \uD83D\uDCCA) with which we can use to sample a single parameter we are uncertain of.'))),
+                              p(HTML(paste('In <b>Module 3: Multiple Parameters</b>, we sample more than one parameter and introduce different
+                                           techniques (<b>sampling methods</b> \uD83D\uDD0D) to efficiently explore the sample space.<br><br>'))),
+                              h4('Acknowledgements'),
+                              p(HTML(paste('This Shiny app was created in 2024 by <a href="mailto:jaswong@unimelb.edu.au">Mr Jason Wong</a> (MD4/MPH Candidate, The University of Melbourne),
+                                           under the supervision of <a href="mailto:patricia.campbell@unimelb.edu.au">Dr Trish Campbell</a> (The Peter Doherty Institute for Infection and Immunity).',
+                                           '<br> It is intended to be used with Dr Campbell&apos;s second semester subject <b>POPH90271 Infectious Diseases Modelling</b>.'))),
+                              p(HTML(paste('The model used in this app was adapted from Andrews, J. R., & Basu, S. (2011).
+                              <i>Transmission dynamics and control of cholera in Haiti: an epidemic model</i>. Lancet, 377(9773), 1248–1255.
+                              <br>You can access the original paper <a href="https://doi.org/10.1016/S0140-6736(11)60273-0">here</a>.')))),
+              accordion_panel('Model specification \uD83D\uDCDD',
+                              p(HTML(paste('On Tuesday 12 January 2010, a catastrophic magnitude 7.0 earthquake struck the Carribbean nation of Haiti.',
+            'Devastating the country&apos;s already poor water and sewage infrastructure, cases of <b><i>Vibrio cholerae</i></b> infection were reported in the country for the first time in over a century.'))),
+            p(HTML(paste('In early 2011, Andrews and Basu constructed a model to evaluate the dynamics and control of cholera in this epidemic.',
+            'Consider the following <b>model diagram</b> (simplified from the original paper). <br><i>What are the compartments in this model?</i>'))),
+            div(img(src = "prefix/Simplified_Model_Diagram.png", width = "50%"), style="text-align: center;"),
+            h4('States'),
+            p(HTML(paste('There are <b>5 compartments</b> in this model (4 human and 1 cholera)&mdash;'))),
+            withMathJax('$$S: \\text{Susceptible}$$'),
+            withMathJax('$$I_s: \\text{Symptomatic}$$'),
+            withMathJax('$$I_a: \\text{Asymptomatic}$$'),
+            withMathJax('$$R: \\text{Recovered}$$'),
+            withMathJax('$$C: \\text{Concentration of cholera in reservoir}$$'),
+            p(HTML(paste('with 2 additional states defined&mdash;'))),
+            withMathJax('$$N = S + I_s + I_a + R: \\text{Total population}$$'),
+            withMathJax('$$W: \\text{Per capita volume of water reservoir accessed}$$'),
+            h4('Parameters'),
+            p(HTML(paste('There are <b>10 parameters</b> in this model. The values in brackets are what Andrews and Basu used)&mdash;'))),
+            withMathJax('$$\\alpha: \\text{rate of contaminated water consumption (fitted)}$$'),
+            withMathJax('$$\\kappa: \\text{concentration of cholera yielding 50% chance of infection (10^5 cells)}$$'),
+            withMathJax('$$p: \\text{proportion of infections that are asymptomatic (0.79)}$$'),
+            withMathJax('$$\\mu_c: \\text{cholera-induced death rate (fitted)}$$'),
+            withMathJax('$$\\gamma: \\text{rate of recovery (5d)}^{-1}$$'),
+            withMathJax('$$\\omega: \\text{rate of loss of immunity (0.8yr)}^{-1}$$'),
+            withMathJax('$$\\mu: \\text{birth and death rate (61yr)}^{-1}$$'),
+            withMathJax('$$\\sigma: \\text{rate of shedding of symptomatic individual (1.3*10^11 cells/d)}$$'),
+            withMathJax('$$\\epsilon: \\text{shedding modifier for asymptomatic individuals (0.001)}$$'),
+            withMathJax('$$\\delta: \\text{decay of cholera in the environment (30d)}^{-1}$$'),
+            p(HTML(paste('<i>While Andrews and Basu fit some of their parameters to data, how else could we assign values to those parameters?</i>'))),
+            p(HTML(paste('We will explore these <b>non-informative methods</b> in Modules 2 and 3.'))),
+            h4('Differential Equations'),
+            p(HTML(paste('There are <b>5 ODEs</b> in this model&mdash;'))),
+            withMathJax('$$\\dot{S} = \\mu N(t) + \\omega R(t) - \\alpha \\frac{C(t)}{\\kappa + C(t)} S(t) -\\mu S(t)$$'),
+            withMathJax('$$\\dot{I_s} = (1 - p) \\cdot \\alpha \\frac{C(t)}{\\kappa + C(t)} S(t) - (\\gamma + \\mu_c + \\mu) I_s(t)$$'),
+            withMathJax('$$\\dot{I_a} = p \\cdot \\alpha \\frac{C(t)}{\\kappa + C(t)} S(t) - (\\gamma + \\mu) I_a(t)$$'),
+            withMathJax('$$\\dot{R} = \\gamma (I_s (t) + I_a(t)) - (\\omega + \\mu) R(t)$$'),
+            withMathJax('$$\\dot{C} = \\frac{\\sigma (I_s(t) + \\epsilon I_a(t))}{W \\cdot N}  - \\delta C(t)$$'),
+            p(HTML(paste('<i>With this system of ODEs, how should we expect the total population to change over time?</i>'))),
+            p(HTML(paste('Navigate to <b>Module 1: Parameter Exploration</b> to see if your prediction is correct!'))))
+            )),
   #################### Module 1 UI ####################
   
   nav_panel(title = "Module 1: Parameter Exploration",
@@ -269,6 +311,7 @@ page_navbar(
             # 1.1 Sidebar for parameter, state and time window sliders
               sidebar = sidebar(
                 accordion(
+                  multiple = FALSE,
                   accordion_panel("Time Window",
                                   helpText("Choose the number of days the model will run for."),
                                   sliderInput(inputId = "M1_days",
@@ -358,7 +401,9 @@ page_navbar(
               
             # 2.1 Sidebar for parameter, state and time window sliders
               sidebar = sidebar(
+                open = "closed",
                 accordion(
+                  multiple = FALSE,
                   open = "Parameters",
                   accordion_panel("States",
                                   helpText("Choose the initial states of the population."),
@@ -447,6 +492,7 @@ page_navbar(
               sidebar = sidebar(
                 open = "closed",
                 accordion(
+                  multiple = FALSE,
                   open = "Parameters",
                   accordion_panel("States",
                             helpText("Choose the initial states of the population."),
