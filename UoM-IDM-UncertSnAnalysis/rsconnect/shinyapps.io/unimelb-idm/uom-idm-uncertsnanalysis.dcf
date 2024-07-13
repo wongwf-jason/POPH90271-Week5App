@@ -1,0 +1,10 @@
+name: uom-idm-uncertsnanalysis
+title:
+username: unimelb-idm
+account: unimelb-idm
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 12312822
+bundleId: 8858988
+url: https://unimelb-idm.shinyapps.io/uom-idm-uncertsnanalysis/
+version: 1
