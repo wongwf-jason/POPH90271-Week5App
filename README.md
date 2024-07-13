@@ -5,20 +5,21 @@ Supervisor: Dr Trish Campbell (The Peter Doherty Institute for Infection and Imm
 Version: 1.0 (July 2024)
 
 ## Shiny Application Learning Objectives
-Using an example from the extant literature, gain an intuitive feel of:
-- [ ] How infectious disease models react to changes in parameter and state inputs (*sensitivity*), and
-- [ ] The different approaches with which parameter and state inputs can be sampled (*non-informative uncertainty*).
-- [ ] How computational considerations affect feasibility of simulations (*implementation efficiency*)
+Using an example from the extant literature, gain an *intuitive feel* of:
+- [ ] How infectious disease models react to changes in parameter and state inputs (**sensitivity**),
+- [ ] The different approaches with which parameter and state inputs can be sampled (**non-informative uncertainty**), and
+- [ ] How computational considerations affect feasibility of simulations (**implementation efficiency**)
 
 ## Shiny Application Features
 
 ## Changelog
 - 1.0 (July 2024): Shiny app deployed to shinyapps.io for hosting
 
-## Known issues
+## Known issues / Future directions
 - Combine all three modules into one dashboard app
-- Two way plots for module 3
+- Grid search does not work with Normal, Negative binomial and Poisson distributions
 - Reduce code reduplication / improve efficiency
 - Improve code documentation
-- Tooltips needed for unfeasible parameter distributions
+- More tooltips needed for unfeasible parameter distributions
 - Seed not reproducing across instances ?allow user to input seed
+- Stop button to terminate simulation and display computed results
