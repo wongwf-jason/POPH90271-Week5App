@@ -257,6 +257,155 @@ output$M1_out_plot_cholera <- renderPlotly({
              yaxis = list(title = "[Bacteria] (cells / L)"))
 })
 
+############################ Module 2 server logic #############################
+
+### Display selected distribution type ###
+observeEvent(input$M2_alpha_disttype, {
+  updateTabsetPanel(inputId = "M2_disttype", selected = input$M2_alpha_disttype)
+})
+
+### Draw samples with selected distribution type ###
+M2_alpha_samples <- reactive({
+  # Progress message 1
+  withProgress(message = "Drawing samples of \u03b1...", value = 0.1, {
+    incProgress(1)
+    switch(input$M2_alpha_disttype,
+           Uniform = runif(n = input$M2_alpha_n,
+                           min = input$M2_unif_alpha_range[1],
+                           max = input$M2_unif_alpha_range[2]),
+           Normal = rnorm(n = input$M2_alpha_n,
+                          mean = input$M2_norm_alpha_mean,
+                          sd = input$M2_norm_alpha_sd),
+           Beta = rbeta(n = input$M2_alpha_n,
+                        shape1 = input$M2_beta_alpha_shape1,
+                        shape2 = input$M2_beta_alpha_shape2),
+           Binomial = rbinom(n = input$M2_alpha_n,
+                             size = input$M2_binom_alpha_size,
+                             prob = input$M2_binom_alpha_prob),
+           "Negative Binomial" = rnbinom(n = input$M2_alpha_n,
+                                         size = input$M2_nbinom_alpha_size,
+                                         prob = input$M2_nbinom_alpha_prob),
+           Poisson = rpois(n = input$M2_alpha_n,
+                           lambda = input$M2_pois_alpha_lambda)
+    )
+  })
+})
+
+### Reactive SIRSC model time series plot ###
+output$M2_out_plot <- renderPlotly({
+  
+  # Progress message 2
+  withProgress(message = "Specifying initial states and parameters...", value = 0.1, {
+    # States
+    state <- c(
+      S = input$M2_initS,
+      I_s = input$M2_initI_s,
+      I_a = input$M2_initI_a,
+      R = initR,
+      C = input$M2_initC,
+      CholeraDead = 0 # Define CholeraDead compartment to monitor cholera deaths
+    )
+    
+    # Time window
+    times <- seq(1, input$M2_days, by = 1)
+    
+    # Create parameter list for every sample
+    parameters_list <- lapply(M2_alpha_samples(), function(ContamWaterCons_Rate_sample) {
+      c(
+        ContamWaterCons_Rate = ContamWaterCons_Rate_sample,
+        Cholera_ID50 = input$M2_Cholera_ID50,
+        Asymptomatic_Proportion = input$M2_Asymptomatic_Proportion,
+        CholeraDeath_Rate = input$M2_CholeraDeath_Rate,
+        invRecovery_Rate = input$M2_invRecovery_Rate,
+        invImmunityLoss_Rate = input$M2_invImmunityLoss_Rate,
+        invBirthDeath_Rate = input$M2_invBirthDeath_Rate,
+        Shedding_Rate_Unnormalised = input$M2_Shedding_Rate / input$M2_W,
+        SheddingAsymptomatic_Modifier = input$M2_SheddingAsymptomatic_Modifier,
+        invCholeraDecay_Rate = input$M2_invCholeraDecay_Rate
+      )
+    })
+    
+    # Define function to solve model for each set of parameters
+    solve_model <- function(parameters) {
+      ode(
+        y = state,
+        times = times - times[1],
+        func = sirsc.ode,
+        parms = parameters)
+    }
+    
+    # Progress message 3
+    incProgress(message = "Solving ordinary differential equations...",
+                detail = HTML("Cholera is being transmitted \uD83E\uDDA0! This should take no longer than ~30 seconds \uD83D\uDE47"),
+                amount = 0.2)
+    
+    # Solve model for all sampled parameters and output to list
+    solutions_list <- lapply(parameters_list, solve_model)
+    
+    # Combine all results into one data frame
+    combined_out_df <- do.call(rbind, lapply(seq_along(solutions_list), function(i) {
+      out_df <- data.frame(solutions_list[[i]])
+      out_df$sample <- i
+      out_df$N <- out_df$S + out_df$I_s + out_df$I_a + out_df$R # Define Total compartment to monitor live population
+      out_df$Total <-  out_df$S + out_df$I_s + out_df$I_a + out_df$R + out_df$CholeraDead # Define Total compartment to monitor live population + cholera deaths
+      # out_df$Lambda <- out_df$ContamWaterCons_Rate_sample * out_df$C / (input$M2_Cholera_ID50 + C) # Define Lambda column to monitor force of infection
+      out_df
+    }))
+    
+    # Add NA breaks in data frame to prevent plotly from joining traces of different samples
+    combined_out_df <- combined_out_df |>
+      group_by(sample) |>
+      reframe(across(everything(), ~ c(., NA)))
+    
+    # Progress message 4
+    incProgress(message = 'Rendering plots...', detail = "", amount = 0.7)
+    
+    # Plot interactive time series
+    out_plot_human <- plot_ly(data = combined_out_df, x = ~time, opacity = 0.5) |>
+      add_trace(y = ~S, name = 'Susceptible (S) ', type = 'scatter', mode = 'lines',
+                line = list(width = ifelse(input$M2_alpha_n %in% c(1, 2, 5, 10), 0.8,
+                                           ifelse(input$M2_alpha_n == 100, 0.1, 0.05)))) |>
+      add_trace(y = ~I_s, name = 'Symptomatic (I<sub>s</sub>)', type = 'scatter', mode = 'lines', 
+                line = list(width = ifelse(input$M2_alpha_n %in% c(1, 2, 5, 10), 0.8,
+                                           ifelse(input$M2_alpha_n == 100, 0.1, 0.05)))) |>
+      add_trace(y = ~I_a, name = 'Asymptomatic (I<sub>a</sub>)', type = 'scatter', mode = 'lines', 
+                line = list(width = ifelse(input$M2_alpha_n %in% c(1, 2, 5, 10), 0.8,
+                                           ifelse(input$M2_alpha_n == 100, 0.1, 0.05)))) |>
+      add_trace(y = ~R, name = 'Recovered (R)', type = 'scatter', mode = 'lines', 
+                line = list(width = ifelse(input$M2_alpha_n %in% c(1, 2, 5, 10), 0.8,
+                                           ifelse(input$M2_alpha_n == 100, 0.1, 0.05)))) |>
+      add_trace(y = ~N, name = 'Total Humans Alive (N)', type = 'scatter', mode = 'lines', 
+                line = list(width = ifelse(input$M2_alpha_n %in% c(1, 2, 5, 10), 0.8,
+                                           ifelse(input$M2_alpha_n == 100, 0.1, 0.05)))) |>
+      add_trace(y = ~CholeraDead, name = 'Cholera Deaths (D<sub>c</sub>)', type = 'scatter', mode = 'lines',
+                line = list(width = ifelse(input$M2_alpha_n %in% c(1, 2, 5, 10), 0.8,
+                                           ifelse(input$M2_alpha_n == 100, 0.1, 0.05))),
+                visible = 'legendonly') |>
+      add_trace(y = ~Total, name = 'Total Humans Alive + Cholera Deaths (N + D<sub>c</sub>)', type = 'scatter', mode = 'lines',
+                line = list(width = ifelse(input$M2_alpha_n %in% c(1, 2, 5, 10), 0.8,
+                                           ifelse(input$M2_alpha_n == 100, 0.1, 0.05))),
+                visible = 'legendonly') |>
+      layout(xaxis = list(title = "Time (days)"),
+             yaxis = list(title = "Number of individuals (persons)"))
+})})
+
+### Sample alpha distribution ###
+# Confirmation of sample distribution parameters selected
+output$M2_out_alpha_selection <- renderUI(p(HTML(paste("You have chosen to sample <b>", input$M2_alpha_n, "</b> values of \u03b1 using a <b>", input$M2_alpha_disttype, "distribution</b>. Now, <b>", input$M2_alpha_n, "iterations </b> of the SIRSC model across <b>", input$M2_days, "days </b> are plotted below."))))
+
+# Histogram to visualise sampled alpha values
+output$M2_out_alpha_dist <- renderPlotly({
+  ggplot_alpha <- ggplot(data = as.data.frame(M2_alpha_samples()),
+                         mapping = aes(x = M2_alpha_samples()),
+                         histnorm = "probability") +
+    geom_histogram(mapping = aes(y = after_stat(ncount)), bins = 30, fill = "#67B7D1") +
+    geom_density(mapping = aes(y = after_stat(ndensity)), color = "#007BC2") +
+    geom_rug(sides="t", color = "#007BC2", alpha = 0.1) +
+    labs(x = "\u03b1 samples", y = "Relative frequency") +
+    theme_bw()
+  out_plot_alpha <- ggplotly(ggplot_alpha)
+})
+
 ############################ Module 3 server logic #############################
 
 # Display selected distribution type

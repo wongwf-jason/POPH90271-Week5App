@@ -22,10 +22,58 @@ library(distributional)
 ##################################### UI #######################################
 ################################################################################
 
+####################### Dynamic UI elements for module 2 #######################
+
+# Sampling distribution parameters for alpha
+M2_disttype_tabs <- tabsetPanel(id = "M2_disttype",
+                                type = "hidden",
+                                tabPanel(title = "Uniform",
+                                         helpText(HTML("The <i>Uniform distribution</i> is a simple, <b>equiprobable</b> probability distribution. <br> You'll need to specify a lower bound \\( a \\), and upper bound \\( b \\).")),
+                                         sliderInput(inputId = "M2_unif_alpha_range",
+                                                     label = "Feasible range for \\( \\alpha \\) i.e. \\([a, b]\\)",
+                                                     min = 0, max = 2, value = c(0.1, 0.5), step = 0.01)),
+                                tabPanel(title = "Normal", 
+                                         helpText(HTML("The <i>Normal distribution</i> is a well-known probability distribution. However, it is <b>unbounded</b> (your samples of \\( \\alpha \\) can take any real number!). <br> You'll need to specify a mean \\( \\mu \\) and standard deviation \\( \\sigma \\).")),
+                                         sliderInput(inputId = "M2_norm_alpha_mean",
+                                                     label = "\\( \\mu \\)",
+                                                     min = 0, max = 2, value = 1, step = 0.01),
+                                         sliderInput(inputId = "M2_norm_alpha_sd", 
+                                                     label = "\\( \\sigma \\)",
+                                                     min = 0, max = 2, value = 1, step = 0.01)),
+                                tabPanel(title = "Beta",
+                                         helpText(HTML("The <i>Beta distribution</i> is a probability distribution <b>bounded between 0 and 1</b>, so it is useful for estimating <b>probabilities</b> or <b>proportions</b>. <br> You'll need to specify two parameters which affect its shape, \\( \\alpha_{\\text{shape}} \\) and \\( \\beta_{\\text{shape}} \\).")),
+                                         sliderInput(inputId = "M2_beta_alpha_shape1",
+                                                     label = "\\( \\alpha_{\\text{shape}} \\)",
+                                                     min = 0, max = 30, value = 1, step = 0.01),
+                                         sliderInput(inputId = "M2_beta_alpha_shape2", 
+                                                     label = "\\( \\beta_{\\text{shape}}\\)",
+                                                     min = 0, max = 30, value = 1, step = 0.01)),
+                                tabPanel(title = "Binomial", 
+                                         helpText(HTML("The <i>Binomial distribution</i> is another well-known probability distribution. However, it is <b>discrete</b> (your samples of \\( \\alpha \\) can only take whole numbers!). It is <b>bounded between \\( 0 \\) and \\( n \\)</b>. <br> You'll need to specify the number of trials \\( n \\) and probability of success \\( p \\).<br>")),
+                                         sliderInput(inputId = "M2_binom_alpha_size",
+                                                     label = "\\( n \\)",
+                                                     min = 0, max = 5, value = 3, step = 1),
+                                         sliderInput(inputId = "M2_binom_alpha_prob", 
+                                                     label = "\\( p \\)",
+                                                     min = 0, max = 1, value = 0.5, step = 0.01)),
+                                tabPanel(title = "Negative Binomial", 
+                                         helpText(HTML("The <i>Negative Binomial distribution</i> is another <b>discrete</b> probability distribution. It can give <b>zero or any positive whole number</b>. <br> You'll need to specify the number of successful trials \\( r \\) and probability of success \\( p \\).")),
+                                         sliderInput(inputId = "M2_nbinom_alpha_size",
+                                                     label = "\\( r \\)",
+                                                     min = 0, max = 5, value = 3, step = 1),
+                                         sliderInput(inputId = "M2_nbinom_alpha_prob", 
+                                                     label = "\\( p \\)",
+                                                     min = 0, max = 1, value = 0.5, step = 0.01)),
+                                tabPanel(title = "Poisson", 
+                                         helpText(HTML("The <i>Poisson distribution</i> is another <b>discrete</b> probability distribution. It can give <b>zero or any positive whole number</b>. <br> It is useful in that <b>you only need to specify one parameter</b>, a mean \\( \\lambda \\).")),
+                                         sliderInput(inputId = "M2_pois_alpha_lambda",
+                                                     label = "\\( \\lambda \\)",
+                                                     min = 0, max = 5, value = 3, step = 0.01)))
+
 ####################### Dynamic UI elements for module 3 #######################
 
 # Sampling distribution parameters for alpha
-disttype_tabs_alpha <- tabsetPanel(id = "M3_disttype_alpha",
+M3_disttype_tabs_alpha <- tabsetPanel(id = "M3_disttype_alpha",
                                    type = "hidden",
                                    tabPanel(title = "Uniform",
                                             sliderInput(inputId = "M3_unif_alpha_range",
@@ -65,7 +113,7 @@ disttype_tabs_alpha <- tabsetPanel(id = "M3_disttype_alpha",
                                                         min = 0, max = 5, value = 3, step = 0.01)))
 
 # Sampling distribution parameters for mu_c
-disttype_tabs_mu_c <- tabsetPanel(id = "M3_disttype_mu_c",
+M3_disttype_tabs_mu_c <- tabsetPanel(id = "M3_disttype_mu_c",
                                   type = "hidden",
                                   tabPanel(title = "Uniform",
                                            sliderInput(inputId = "M3_unif_mu_c_range",
@@ -105,7 +153,7 @@ disttype_tabs_mu_c <- tabsetPanel(id = "M3_disttype_mu_c",
                                                        min = 0, max = 5, value = 3, step = 0.01)))
 
 # [UNUSED] Sampling distribution parameters for initC
-#disttype_tabs_initC <- tabsetPanel(id = "M3_disttype_initC",
+#M3_disttype_tabs_initC <- tabsetPanel(id = "M3_disttype_initC",
 #                                   type = "hidden",
 #                                   tabPanel(title = "Uniform",
 #                                            sliderInput(inputId = "M3_unif_initC_range",
@@ -190,33 +238,35 @@ page_navbar(
   #################### Welcome page ####################
   
   nav_panel(title = "Welcome",
-            h3('Introduction'),
-            p(HTML(paste('Hello! Welcome to this interactive Shiny App for <b>POPH90271 Infectious Diseases Modelling</b>.
-                         In Week 5, you have been introduced to the concepts of <i>Uncertainty and Sensitivity Analysis</i>.'))),
+            h3('Introduction \uD83D\uDC4B'),
+            p(HTML(paste('Hello and welcome to this interactive <i>Shiny</i> App for <b>POPH90271 Infectious Diseases Modelling</b>!'))),
+            p(HTML(paste('Through the Week 5 lectures, we were introduced to the concepts of <i>Uncertainty and Sensitivity Analysis</i>.'))),
             p(HTML(paste('In this app, we will use an example from the extant literature to gain an <i>intuitive feel</i> for:'))),
             tags$ul(tags$li(HTML(paste('How models react to changes in parameter and state inputs (<b>sensitivity</b>),'))),
                     tags$li(HTML(paste('The different approaches with which parameter and state inputs can be sampled (<b>non-informative uncertainty</b>), and'))),
                     tags$li(HTML(paste('How computational considerations affect feasibility of simulations (<b>implementation efficiency</b>).')))),
             p(HTML(paste('In <b>Module 1: Parameter Exploration</b>, we introduce a <b>cholera outbreak</b> \uD83E\uDDA0,
                          and visualise how changing various parameters and state inputs affects the model&apos;s outputs,'))),
-            p(HTML(paste('In <b>Module 2: Single Parameter Sampling</b>, we introduce various probability distributions
-                         (<b>sampling distributions</b>) with which we can use to sample a single parameter we are uncertain about.'))),
+            p(HTML(paste('In <b>Module 2: Single Parameter Sampling </b>, we introduce various probability distributions
+                         (<b>sampling distributions</b> \uD83D\uDCCA) with which we can use to sample a single parameter we are uncertain of.'))),
             p(HTML(paste('In <b>Module 3: Multiple Parameters</b>, we sample more than one parameter and introduce different
-                         techniques (<b>sampling methods</b>) to efficiently explore the sample space.'))),
+                         techniques (<b>sampling methods</b> \uD83D\uDD0D) to efficiently explore the sample space.'))),
+            h3('Model description'),
+            p(HTML(paste('Hello!'))),
             h3('Acknowledgements'),
             p(HTML(paste('This Shiny app was created in 2024 by <a href="mailto:jaswong@unimelb.edu.au">Mr Jason Wong</a> (MD4/MPH Candidate, The University of Melbourne),
                          under the supervision of <a href="mailto:patricia.campbell@unimelb.edu.au">Dr Trish Campbell</a> (The Peter Doherty Institute for Infection and Immunity).'))),
             p(HTML(paste('The model used in this app was adapted from Andrews, J. R., & Basu, S. (2011).
                          <i>Transmission dynamics and control of cholera in Haiti: an epidemic model</i>. Lancet, 377(9773), 1248–1255.<br>
-                         You may access the original paper <a href="https://doi.org/10.1016/S0140-6736(11)60273-0">here</a>.')))),
+                         You can access the original paper <a href="https://doi.org/10.1016/S0140-6736(11)60273-0">here</a>.')))),
   
   #################### Module 1 UI ####################
   
   nav_panel(title = "Module 1: Parameter Exploration",
             withMathJax(),
-            
-            # 1.1 Sidebar for parameter, state and time window sliders
             layout_sidebar(
+              
+            # 1.1 Sidebar for parameter, state and time window sliders
               sidebar = sidebar(
                 accordion(
                   accordion_panel("Time Window",
@@ -292,7 +342,7 @@ page_navbar(
               card(card_header("Human population over time"),
                    plotlyOutput("M1_out_plot_human")),
               # 1.2.2 Model time series visualisation for force of infection
-              card(card_header("Force of infection \u03BB over time"),
+              card(card_header("Force of infection (\u03BB) over time"),
                    plotlyOutput("M1_out_plot_lambda")),
               # 1.2.3 Model time series visualisation for cholera concentration
               card(card_header("Cholera concentration over time"),
@@ -304,19 +354,96 @@ page_navbar(
   
   nav_panel(title = "Module 2: Single Parameter Sampling",
             withMathJax(),
-            
+            layout_sidebar(
+              
             # 2.1 Sidebar for parameter, state and time window sliders
-            
+              sidebar = sidebar(
+                accordion(
+                  open = "Parameters",
+                  accordion_panel("States",
+                                  helpText("Choose the initial states of the population."),
+                                  sliderInput(inputId = "M2_initS",
+                                              label = "\\( S(0) \\): Initial Susceptible",
+                                              min = 0, max = 10000, value = 1000),
+                                  sliderInput(inputId = "M2_initI_s",
+                                              label = "\\( I_s(0) \\): Initial Symptomatic",
+                                              min = 0, max = 10000, value = 0),
+                                  sliderInput(inputId = "M2_initI_a",
+                                              label = "\\( I_a(0) \\): Initial Asymptomatic",
+                                              min = 0, max = 10000, value = 0),
+                                  shinyWidgets::sliderTextInput(inputId = "M2_initC",
+                                                                label = "\\( C(0) \\): Initial Cholera Reservoir Concentration (bacteria / L)",
+                                                                choices = c(0, 1, 10, 10^2, 10^3, 10^4, 10^5, 10^6, 10^7), selected = 10^5, grid = T),
+                                  sliderInput(inputId = "M2_W",
+                                              label = "\\( W(0) \\): Water reservoir volume per capita  (L per person)",
+                                              min = 1, max = 100, value = 15)),
+                  accordion_panel("Parameters",
+                                  tags$div("We now sample \\( \\alpha \\) using the sampling distribution set on the right."),
+                                  helpText("Choose the values of the other parameters."),
+                                  shinyWidgets::sliderTextInput(inputId = "M2_Cholera_ID50",
+                                                                label = "\\( \\kappa \\): Concentration of cholera yielding 50% chance of infection (bacteria / L)",
+                                                                choices = c(0, 1, 10, 10^2, 10^3, 10^4, 10^5, 10^6, 10^7), selected = 10^5, grid = T),
+                                  sliderInput(inputId = "M2_Asymptomatic_Proportion",
+                                              label = "\\( p \\): Proportion of infections that are asymptomatic",
+                                              min = 0, max = 1, value = 0.79, step = 0.01),
+                                  sliderInput(inputId = "M2_CholeraDeath_Rate",
+                                              label = "\\( \\mu_c \\) Cholera-induced death rate (per day)",
+                                              min = 0, max = 1, value = 0.5, step = 0.01),
+                                  shinyWidgets::sliderTextInput(inputId = "M2_invRecovery_Rate",
+                                                                label = "\\( D_\\text{inf} = \\frac{1}{\\gamma} \\): Duration of infectiousness (days)",
+                                                                choices = c(0.001, 1:21, 1000), selected = 5, grid = T),
+                                  shinyWidgets::sliderTextInput(inputId = "M2_invImmunityLoss_Rate",
+                                                                label = "\\( D_\\text{imm} = \\frac{1}{\\omega} \\): Duration of immunity (years)",
+                                                                choices = c(0.001, seq(0.1, 2, 0.1), 1000), selected = 0.8, grid = T),
+                                  sliderInput(inputId = "M2_invBirthDeath_Rate",
+                                              label = "\\( L_\\text{H} = \\frac{1}{\\mu} \\): Life expectancy of humans (years)",
+                                              min = 30, max = 100, value = 61, step = 1),
+                                  shinyWidgets::sliderTextInput(inputId = "M2_Shedding_Rate",
+                                                                label = "\\( \\sigma \\): Rate of shedding per symptomatic individual (bacteria / day per person)",
+                                                                choices = c(0, 10^5, 10^6, 10^7, 10^8, 10^9, 10^10, 10^11), selected = 10^5, grid = T),
+                                  shinyWidgets::sliderTextInput(inputId = "M2_SheddingAsymptomatic_Modifier",
+                                                                label = " \\( \\epsilon \\): Shedding modifier for asymptomatic individuals",
+                                                                choices = c(0, 10^-4, 10^-3, 10^-2, 0.1, 0.2, 0.4, 0.6, 0.8, 1), selected = 10^-3, grid = T),
+                                  shinyWidgets::sliderTextInput(inputId = "M2_invCholeraDecay_Rate",
+                                                                label = "\\( L_\\text{C} = \\frac{1}{\\delta} \\): Life expectancy of cholera in the environment (days)",
+                                                                choices = c(0.001, 1:120, 1000), selected = 30, grid = T)
+                  )
+                )
+              ),
+              
             # 2.2 Main panel cards
-  ),
+            layout_columns(
+              # 2.2.1 Choosing sampling distribution type, sample size and time window
+              card(card_header("Distribution type, sample size and time window"),
+                   selectInput(inputId = "M2_alpha_disttype",
+                               label = "Probability distribution",
+                               choices = c("Uniform", "Normal", "Beta", "Binomial", "Negative Binomial", "Poisson")),
+                   shinyWidgets::sliderTextInput(inputId = "M2_alpha_n",
+                                                 label = "Number of samples of \\( \\alpha \\)",
+                                                 choices = c(1, 2, 5, 10, 100, 500, 1000), selected = 10, grid = T),
+                   shinyWidgets::sliderTextInput(inputId = "M2_days",
+                                                 label = "Number of days the model will run",
+                                                 choices = c(10, 30, 60, 120, 365), selected = 30, grid = T)
+              ),
+              # 2.2.2 Choosing sampling distribution 
+              card(card_header("Sampling distribution parameters"),
+                   M2_disttype_tabs),
+              # 2.2.3 Visualising sample distribution
+              card(card_header("Samples of \\( \\alpha \\) you've taken"),
+                   plotlyOutput("M2_out_alpha_dist")),
+              # 2.2.4 Summary of selection and Model time series visualisation
+              card(uiOutput("M2_out_alpha_selection"),
+                plotlyOutput("M2_out_plot")),
+            col_widths = c(4, 4, 4, 12),
+            row_heights = c(2, 3)))),
   
   #################### Module 3 UI ####################
   
   nav_panel(title = "Module 3: Multiple Parameters",
             withMathJax(),
-            
-            # 3.1 Sidebar for parameter and state sliders
             layout_sidebar(
+              
+            # 3.1 Sidebar for parameter and state sliders
               sidebar = sidebar(
                 open = "closed",
                 accordion(
@@ -379,20 +506,20 @@ page_navbar(
               
               # 3.2 Main panel cards
               layout_columns(
-                # 3.2.1 Choosing sampling distribution type, sample size and time window
+                # 3.2.1 Choosing sampling distribution type and sample size
                 card(card_header("Sampling distribution"),
                      selectInput(inputId = "M3_alpha_disttype",
                                  label = "Probability distribution type for \\( \\alpha \\)",
                                  choices = c("Uniform", "Normal", "Beta", "Binomial", "Negative Binomial", "Poisson")),
-                     disttype_tabs_alpha,
+                     M3_disttype_tabs_alpha,
                      selectInput(inputId = "M3_mu_c_disttype",
                                  label = "Probability distribution type for \\( \\mu_c \\)",
                                  choices = c("Uniform", "Normal", "Beta", "Binomial", "Negative Binomial", "Poisson")),
-                     disttype_tabs_mu_c#,
+                     M3_disttype_tabs_mu_c#,
                     #selectInput(inputId = "M3_initC_disttype",
                     #            label = "Probability distribution type \\( C(0) \\)",
                     #            choices = c("Uniform", "Normal", "Beta", "Binomial", "Negative Binomial", "Poisson")),
-                    #disttype_tabs_initC
+                    #M3_disttype_tabs_initC
                     ),
                 
                 # 3.2.2 Choosing sampling distribution 
