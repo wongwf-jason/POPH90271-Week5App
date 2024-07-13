@@ -112,31 +112,31 @@
 # 4 Server logic
 server <- function(input, output) {
   ## 4.1 Reactive SIRSC model
-  output$out <- renderPlotly({
+  output$M1_out_plot <- renderPlotly({
     ### 4.1.1 States (either based on reactive inputs or pre-defined)
     state <- c(
-      S = input$initS,
-      I_s = input$initI_s,
-      I_a = input$initI_a,
+      S = input$M1_initS,
+      I_s = input$M1_initI_s,
+      I_a = input$M1_initI_a,
       R = initR,
-      C = input$initC,
+      C = input$M1_initC,
       CholeraDead = 0 # Define CholeraDead compartment to monitor cholera deaths
     )
     ### 4.1.2 Parameters (based on reactive inputs)
     parameters <- c(
-      ContamWaterCons_Rate = input$ContamWaterCons_Rate,
-      Cholera_ID50 = input$Cholera_ID50,
-      Asymptomatic_Proportion = input$Asymptomatic_Proportion,
-      CholeraDeath_Rate = input$CholeraDeath_Rate,
-      invRecovery_Rate = input$invRecovery_Rate,
-      invImmunityLoss_Rate = input$invImmunityLoss_Rate,
-      invBirthDeath_Rate = input$invBirthDeath_Rate,
-      Shedding_Rate_Unnormalised = input$Shedding_Rate / input$W,
-      SheddingAsymptomatic_Modifier = input$SheddingAsymptomatic_Modifier,
-      invCholeraDecay_Rate = input$invCholeraDecay_Rate
+      ContamWaterCons_Rate = input$M1_ContamWaterCons_Rate,
+      Cholera_ID50 = input$M1_Cholera_ID50,
+      Asymptomatic_Proportion = input$M1_Asymptomatic_Proportion,
+      CholeraDeath_Rate = input$M1_CholeraDeath_Rate,
+      invRecovery_Rate = input$M1_invRecovery_Rate,
+      invImmunityLoss_Rate = input$M1_invImmunityLoss_Rate,
+      invBirthDeath_Rate = input$M1_invBirthDeath_Rate,
+      Shedding_Rate_Unnormalised = input$M1_Shedding_Rate / input$M1_W,
+      SheddingAsymptomatic_Modifier = input$M1_SheddingAsymptomatic_Modifier,
+      invCholeraDecay_Rate = input$M1_invCholeraDecay_Rate
     )
     ### 4.1.3 Time window (by number of days)
-    times <- seq(1, input$days, by = 0.1)
+    times <- seq(1, input$M1_days, by = 0.1)
     ### 4.1.4 Solve model and output to matrix
     out_matrix <- ode(
       y = state,
@@ -149,7 +149,7 @@ server <- function(input, output) {
       data.frame() |>
       mutate(N = S + I_s + I_a + R) |> # Define Total compartment to monitor live population
       mutate(Total = S + I_s + I_a + R + CholeraDead) |> # Define Total compartment to monitor live population + cholera deaths
-      mutate(Lambda = input$ContamWaterCons_Rate * C / (input$Cholera_ID50 + C)) # Define Lambda column to monitor force of infection
+      mutate(Lambda = input$M1_ContamWaterCons_Rate * C / (input$M1_Cholera_ID50 + C)) # Define Lambda column to monitor force of infection
     ### 4.1.6 SIRSC model interactive time series
     #### 4.1.6.1 Human population plot
     out_plot_human <- plot_ly(data = out_df)
@@ -170,7 +170,7 @@ server <- function(input, output) {
                                 showarrow = F, 
                                 xref='paper', yref='paper', xanchor = 'center'),
              xaxis = list(title = "Time (days)"),
-             yaxis = list(title = "Number of individuals (persons)"))
+             yaxis = list(title = "Numb <- <- er of individuals (persons)"))
     #### 4.1.6.2 Force of infection plot
     out_plot_lambda <- plot_ly(data = out_df)
     out_plot_lambda <- out_plot_lambda |>
@@ -198,10 +198,4 @@ server <- function(input, output) {
                         out_plot_bottom,
                         nrows = 2, titleX = TRUE, titleY = TRUE, margin = 0.08)
   })
-  
-  ## 4.X Close app and stop Shiny
-  observe({if (input$Exit_app > 0) stopApp()})
 }
-
-# 5 App Execution
-runApp(list(ui = ui, server = server), launch.browser = TRUE)

@@ -30,49 +30,49 @@ disttype_tabs <- tabsetPanel(id = "disttype",
                              type = "hidden",
                              tabPanel(title = "Uniform",
                                       helpText(HTML("The Uniform distribution is a simple, equiprobable probability distribution. <br> You'll need to specify a lower bound \\( a \\), and upper bound \\( b \\).")),
-                                      sliderInput(inputId = "unif_alpha_range",
+                                      sliderInput(inputId = "M2_unif_alpha_range",
                                                   label = "Feasible range for \\( \\alpha \\) i.e. \\([a, b]\\)",
                                                   min = 0, max = 2, value = c(0.1, 0.5), step = 0.01),
                              ),
                              tabPanel(title = "Normal", 
                                       helpText(HTML("The Normal distribution is a well-known probability distribution. However, it is unbounded (your samples of \\( \\alpha \\) can take any real number!). <br> You'll need to specify a mean \\( \\mu \\) and standard deviation \\( \\sigma \\).")),
-                                      sliderInput(inputId = "norm_alpha_mean",
+                                      sliderInput(inputId = "M2_norm_alpha_mean",
                                                   label = "\\( \\mu \\)",
                                                   min = 0, max = 2, value = 1, step = 0.01),
-                                      sliderInput(inputId = "norm_alpha_sd", 
+                                      sliderInput(inputId = "M2_norm_alpha_sd", 
                                                   label = "\\( \\sigma \\)",
                                                   min = 0, max = 2, value = 1, step = 0.01)
                              ),
                              tabPanel(title = "Beta",
                                       helpText(HTML("The Beta distribution is a probability distribution bounded between 0 and 1, so it is useful for estimating probabilities or proportions. <br> You'll need to specify two parameters which affect its shape, \\( \\alpha_{\\text{shape}} \\) and \\( \\beta_{\\text{shape}} \\).")),
-                                      sliderInput(inputId = "beta_alpha_shape1",
+                                      sliderInput(inputId = "M2_beta_alpha_shape1",
                                                   label = "\\( \\alpha_{\\text{shape}} \\)",
                                                   min = 0, max = 30, value = 1, step = 0.01),
-                                      sliderInput(inputId = "beta_alpha_shape2", 
+                                      sliderInput(inputId = "M2_beta_alpha_shape2", 
                                                   label = "\\( \\beta_{\\text{shape}}\\)",
                                                   min = 0, max = 30, value = 1, step = 0.01)
                              ),
                              tabPanel(title = "Binomial", 
                                       helpText(HTML("The Binomial distribution is another well-known probability distribution. However, it is discrete (your samples of \\( \\alpha \\) can only take whole numbers!). It is bounded between \\( 0 \\) and \\( n \\). <br> You'll need to specify the number of trials \\( n \\) and probability of success \\( p \\).<br>")),
-                                      sliderInput(inputId = "binom_alpha_size",
+                                      sliderInput(inputId = "M2_binom_alpha_size",
                                                   label = "\\( n \\)",
                                                   min = 0, max = 5, value = 3, step = 1),
-                                      sliderInput(inputId = "binom_alpha_prob", 
+                                      sliderInput(inputId = "M2_binom_alpha_prob", 
                                                   label = "\\( p \\)",
                                                   min = 0, max = 1, value = 0.5, step = 0.01)
                              ),
                              tabPanel(title = "Negative Binomial", 
                                       helpText(HTML("The Negative Binomial distribution is another discrete probability distribution. It can give zero or any positive whole number. <br> You'll need to specify the number of successful trials \\( r \\) and probability of success \\( p \\).")),
-                                      sliderInput(inputId = "nbinom_alpha_size",
+                                      sliderInput(inputId = "M2_nbinom_alpha_size",
                                                   label = "\\( r \\)",
                                                   min = 0, max = 5, value = 3, step = 1),
-                                      sliderInput(inputId = "nbinom_alpha_prob", 
+                                      sliderInput(inputId = "M2_nbinom_alpha_prob", 
                                                   label = "\\( p \\)",
                                                   min = 0, max = 1, value = 0.5, step = 0.01)
                              ),
                              tabPanel(title = "Poisson", 
                                       helpText(HTML("The Poisson distribution is another discrete probability distribution. It can give zero or any positive whole number. <br> It is useful in that you only need to specify one parameter, a mean \\( \\lambda \\).")),
-                                      sliderInput(inputId = "pois_alpha_lambda",
+                                      sliderInput(inputId = "M2_pois_alpha_lambda",
                                                   label = "\\( \\lambda \\)",
                                                   min = 0, max = 5, value = 3, step = 0.01),
                              )
@@ -92,49 +92,49 @@ ui <- page_sidebar(
     navset_underline(
       nav_panel("States",
                 helpText("Choose the initial states of the population."),
-                sliderInput(inputId = "initS",
+                sliderInput(inputId = "M2_initS",
                             label = "\\( S(0) \\): Initial Susceptible",
                             min = 0, max = 10000, value = 1000),
-                sliderInput(inputId = "initI_s",
+                sliderInput(inputId = "M2_initI_s",
                             label = "\\( I_s(0) \\): Initial Symptomatic",
                             min = 0, max = 10000, value = 0),
-                sliderInput(inputId = "initI_a",
+                sliderInput(inputId = "M2_initI_a",
                             label = "\\( I_a(0) \\): Initial Asymptomatic",
                             min = 0, max = 10000, value = 0),
-                shinyWidgets::sliderTextInput(inputId = "initC",
+                shinyWidgets::sliderTextInput(inputId = "M2_initC",
                                               label = "\\( C(0) \\): Initial Cholera Reservoir Concentration (bacteria / L)",
                                               choices = c(0, 1, 10, 10^2, 10^3, 10^4, 10^5, 10^6, 10^7), selected = 10^5, grid = T),
-                sliderInput(inputId = "W",
+                sliderInput(inputId = "M2_W",
                             label = "\\( W(0) \\): Water reservoir volume per capita  (L per person)",
                             min = 1, max = 100, value = 15)),
       nav_panel("Parameters",
                 tags$div("We now sample \\( \\alpha \\) using the sampling distribution set on the right."),
                 helpText("Choose the values of the other parameters."),
-                shinyWidgets::sliderTextInput(inputId = "Cholera_ID50",
+                shinyWidgets::sliderTextInput(inputId = "M2_Cholera_ID50",
                                               label = "\\( \\kappa \\): Concentration of cholera yielding 50% chance of infection (bacteria / L)",
                                               choices = c(0, 1, 10, 10^2, 10^3, 10^4, 10^5, 10^6, 10^7), selected = 10^5, grid = T),
-                sliderInput(inputId = "Asymptomatic_Proportion",
+                sliderInput(inputId = "M2_Asymptomatic_Proportion",
                             label = "\\( p \\): Proportion of infections that are asymptomatic",
                             min = 0, max = 1, value = 0.79, step = 0.01),
-                sliderInput(inputId = "CholeraDeath_Rate",
+                sliderInput(inputId = "M2_CholeraDeath_Rate",
                             label = "\\( \\mu_c \\) Cholera-induced death rate (per day)",
                             min = 0, max = 1, value = 0.5, step = 0.01),
-                shinyWidgets::sliderTextInput(inputId = "invRecovery_Rate",
+                shinyWidgets::sliderTextInput(inputId = "M2_invRecovery_Rate",
                                               label = "\\( D_\\text{inf} = \\frac{1}{\\gamma} \\): Duration of infectiousness (days)",
                                               choices = c(0.001, 1:21, 1000), selected = 5, grid = T),
-                shinyWidgets::sliderTextInput(inputId = "invImmunityLoss_Rate",
+                shinyWidgets::sliderTextInput(inputId = "M2_invImmunityLoss_Rate",
                                               label = "\\( D_\\text{imm} = \\frac{1}{\\omega} \\): Duration of immunity (years)",
                                               choices = c(0.001, seq(0.1, 2, 0.1), 1000), selected = 0.8, grid = T),
-                sliderInput(inputId = "invBirthDeath_Rate",
+                sliderInput(inputId = "M2_invBirthDeath_Rate",
                             label = "\\( L_\\text{H} = \\frac{1}{\\mu} \\): Life expectancy of humans (years)",
                             min = 30, max = 100, value = 61, step = 1),
-                shinyWidgets::sliderTextInput(inputId = "Shedding_Rate",
+                shinyWidgets::sliderTextInput(inputId = "M2_Shedding_Rate",
                                               label = "\\( \\sigma \\): Rate of shedding per symptomatic individual (bacteria / day per person)",
                                               choices = c(0, 10^5, 10^6, 10^7, 10^8, 10^9, 10^10, 10^11), selected = 10^5, grid = T),
-                shinyWidgets::sliderTextInput(inputId = "SheddingAsymptomatic_Modifier",
+                shinyWidgets::sliderTextInput(inputId = "M2_SheddingAsymptomatic_Modifier",
                                               label = " \\( \\epsilon \\): Shedding modifier for asymptomatic individuals",
                                               choices = c(0, 10^-4, 10^-3, 10^-2, 0.1, 0.2, 0.4, 0.6, 0.8, 1), selected = 10^-3, grid = T),
-                shinyWidgets::sliderTextInput(inputId = "invCholeraDecay_Rate",
+                shinyWidgets::sliderTextInput(inputId = "M2_invCholeraDecay_Rate",
                                               label = "\\( L_\\text{C} = \\frac{1}{\\delta} \\): Life expectancy of cholera in the environment (days)",
                                               choices = c(0.001, 1:120, 1000), selected = 30, grid = T)
       )
@@ -145,13 +145,13 @@ ui <- page_sidebar(
   layout_columns(
     ## 2.A Choosing sampling distribution type, sample size and time window
     card(card_header("Distribution type, sample size and time window"),
-         selectInput(inputId = "alpha_disttype",
+         selectInput(inputId = "M2_alpha_disttype",
                      label = "Probability distribution",
                      choices = c("Uniform", "Normal", "Beta", "Binomial", "Negative Binomial", "Poisson")),
-         shinyWidgets::sliderTextInput(inputId = "alpha_n",
+         shinyWidgets::sliderTextInput(inputId = "M2_alpha_n",
                                        label = "Number of samples of \\( \\alpha \\)",
                                        choices = c(1, 2, 5, 10, 100, 500, 1000), selected = 10, grid = T),
-         shinyWidgets::sliderTextInput(inputId = "days",
+         shinyWidgets::sliderTextInput(inputId = "M2_days",
                                        label = "Number of days the model will run",
                                        choices = c(10, 30, 60, 120, 365), selected = 30, grid = T)
     ),
@@ -161,15 +161,15 @@ ui <- page_sidebar(
     ),
     ## 2.C Visualising sample distribution
     card(card_header("Samples of \\( \\alpha \\) you've taken"),
-         plotlyOutput("out_alpha_dist")
+         plotlyoutput("M2_out_alpha_dist")
     )
   ),
   ## 2.3 Bottom-row cards
   card(
     ### 2.3.2 Summary of selection
-    uiOutput("out_alpha_selection"),
+    uioutput("M2_out_alpha_selection"),
     ### 2.3.3 Model Visualisation
-    plotlyOutput("out_plot")
+    plotlyoutput("M2_out_plot")
   ),
   ### 2.4 Footer
   card_footer("Based off Andrews, J. R., & Basu, S. (2011). Transmission dynamics and control of cholera in Haiti: an epidemic model. Lancet, 377(9773), 1248–1255. https://doi.org/10.1016/S0140-6736(11)60273-0")
@@ -234,11 +234,11 @@ sirsc.ode <- function(t, state, parameters) {
 # 4 Server logic
 server <- function(input, output) {
   ## 4.X Close app and stop Shiny
-  observe({if (input$Exit_app > 0) stopApp()})
+  observe({if (input$M2_Exit_app > 0) stopApp()})
   
   ## 4.A Display selected distribution type
-  observeEvent(input$alpha_disttype, {
-    updateTabsetPanel(inputId = "disttype", selected = input$alpha_disttype)
+  observeEvent(input$M2_alpha_disttype, {
+    updateTabsetPanel(inputId = "M2_disttype", selected = input$M2_alpha_disttype)
   })
   
   ## 4.B Draw samples with selected distribution type
@@ -246,58 +246,58 @@ server <- function(input, output) {
     #### 4.P.1 Progress message 1
     withProgress(message = "Drawing samples of \u03b1...", value = 0.1, {
       incProgress(1)
-      switch(input$alpha_disttype,
-             Uniform = runif(n = input$alpha_n,
-                             min = input$unif_alpha_range[1],
-                             max = input$unif_alpha_range[2]),
-             Normal = rnorm(n = input$alpha_n,
-                            mean = input$norm_alpha_mean,
-                            sd = input$norm_alpha_sd),
-             Beta = rbeta(n = input$alpha_n,
-                          shape1 = input$beta_alpha_shape1,
-                          shape2 = input$beta_alpha_shape2),
-             Binomial = rbinom(n = input$alpha_n,
-                               size = input$binom_alpha_size,
-                               prob = input$binom_alpha_prob),
-             "Negative Binomial" = rnbinom(n = input$alpha_n,
-                                           size = input$nbinom_alpha_size,
-                                           prob = input$nbinom_alpha_prob),
-             Poisson = rpois(n = input$alpha_n,
-                             lambda = input$pois_alpha_lambda)
+      switch(input$M2_alpha_disttype,
+             Uniform = runif(n = input$M2_alpha_n,
+                             min = input$M2_unif_alpha_range[1],
+                             max = input$M2_unif_alpha_range[2]),
+             Normal = rnorm(n = input$M2_alpha_n,
+                            mean = input$M2_norm_alpha_mean,
+                            sd = input$M2_norm_alpha_sd),
+             Beta = rbeta(n = input$M2_alpha_n,
+                          shape1 = input$M2_beta_alpha_shape1,
+                          shape2 = input$M2_beta_alpha_shape2),
+             Binomial = rbinom(n = input$M2_alpha_n,
+                               size = input$M2_binom_alpha_size,
+                               prob = input$M2_binom_alpha_prob),
+             "Negative Binomial" = rnbinom(n = input$M2_alpha_n,
+                                           size = input$M2_nbinom_alpha_size,
+                                           prob = input$M2_nbinom_alpha_prob),
+             Poisson = rpois(n = input$M2_alpha_n,
+                             lambda = input$M2_pois_alpha_lambda)
       )
     })
   })
   
   ## 4.1 Reactive SIRSC model
-  output$out_plot <- renderPlotly({
+  output$M2_out_plot <- renderPlotly({
     ### 4.P.2 Progress message 2
     withProgress(message = "Specifying initial states and parameters...", value = 0.1, {
       ### 4.1.1 States (either based on reactive inputs or pre-defined)
       state <- c(
-        S = input$initS,
-        I_s = input$initI_s,
-        I_a = input$initI_a,
+        S = input$M2_initS,
+        I_s = input$M2_initI_s,
+        I_a = input$M2_initI_a,
         R = initR,
-        C = input$initC,
+        C = input$M2_initC,
         CholeraDead = 0 # Define CholeraDead compartment to monitor cholera deaths
       )
       
       ### 4.1.2 Time window (by number of days)
-      times <- seq(1, input$days, by = 1)
+      times <- seq(1, input$M2_days, by = 1)
       
       ### 4.1.3V Create parameter list for every sample (VECTORISED)
       parameters_list <- lapply(alpha_samples(), function(ContamWaterCons_Rate_sample) {
         c(
           ContamWaterCons_Rate = ContamWaterCons_Rate_sample,
-          Cholera_ID50 = input$Cholera_ID50,
-          Asymptomatic_Proportion = input$Asymptomatic_Proportion,
-          CholeraDeath_Rate = input$CholeraDeath_Rate,
-          invRecovery_Rate = input$invRecovery_Rate,
-          invImmunityLoss_Rate = input$invImmunityLoss_Rate,
-          invBirthDeath_Rate = input$invBirthDeath_Rate,
-          Shedding_Rate_Unnormalised = input$Shedding_Rate / input$W,
-          SheddingAsymptomatic_Modifier = input$SheddingAsymptomatic_Modifier,
-          invCholeraDecay_Rate = input$invCholeraDecay_Rate
+          Cholera_ID50 = input$M2_Cholera_ID50,
+          Asymptomatic_Proportion = input$M2_Asymptomatic_Proportion,
+          CholeraDeath_Rate = input$M2_CholeraDeath_Rate,
+          invRecovery_Rate = input$M2_invRecovery_Rate,
+          invImmunityLoss_Rate = input$M2_invImmunityLoss_Rate,
+          invBirthDeath_Rate = input$M2_invBirthDeath_Rate,
+          Shedding_Rate_Unnormalised = input$M2_Shedding_Rate / input$M2_W,
+          SheddingAsymptomatic_Modifier = input$M2_SheddingAsymptomatic_Modifier,
+          invCholeraDecay_Rate = input$M2_invCholeraDecay_Rate
         )
       })
       
@@ -323,7 +323,7 @@ server <- function(input, output) {
         out_df$sample <- i
         out_df$N <- out_df$S + out_df$I_s + out_df$I_a + out_df$R # Define Total compartment to monitor live population
         out_df$Total <-  out_df$S + out_df$I_s + out_df$I_a + out_df$R + out_df$CholeraDead # Define Total compartment to monitor live population + cholera deaths
-        # out_df$Lambda <- out_df$ContamWaterCons_Rate_sample * out_df$C / (input$Cholera_ID50 + C) # Define Lambda column to monitor force of infection
+        # out_df$Lambda <- out_df$ContamWaterCons_Rate_sample * out_df$C / (input$M2_Cholera_ID50 + C) # Define Lambda column to monitor force of infection
         out_df
       }))
       
@@ -338,27 +338,27 @@ server <- function(input, output) {
       #### 4.1.7.1 Human compartments plot
       out_plot_human <- plot_ly(data = combined_out_df, x = ~time, opacity = 0.5) |>
         add_trace(y = ~S, name = 'Susceptible (S) ', type = 'scatter', mode = 'lines',
-                  line = list(width = ifelse(input$alpha_n %in% c(1, 2, 5, 10), 0.8,
-                                             ifelse(input$alpha_n == 100, 0.1, 0.05)))) |>
+                  line = list(width = ifelse(input$M2_alpha_n %in% c(1, 2, 5, 10), 0.8,
+                                             ifelse(input$M2_alpha_n == 100, 0.1, 0.05)))) |>
         add_trace(y = ~I_s, name = 'Symptomatic (I<sub>s</sub>)', type = 'scatter', mode = 'lines', 
-                  line = list(width = ifelse(input$alpha_n %in% c(1, 2, 5, 10), 0.8,
-                                             ifelse(input$alpha_n == 100, 0.1, 0.05)))) |>
+                  line = list(width = ifelse(input$M2_alpha_n %in% c(1, 2, 5, 10), 0.8,
+                                             ifelse(input$M2_alpha_n == 100, 0.1, 0.05)))) |>
         add_trace(y = ~I_a, name = 'Asymptomatic (I<sub>a</sub>)', type = 'scatter', mode = 'lines', 
-                  line = list(width = ifelse(input$alpha_n %in% c(1, 2, 5, 10), 0.8,
-                                             ifelse(input$alpha_n == 100, 0.1, 0.05)))) |>
+                  line = list(width = ifelse(input$M2_alpha_n %in% c(1, 2, 5, 10), 0.8,
+                                             ifelse(input$M2_alpha_n == 100, 0.1, 0.05)))) |>
         add_trace(y = ~R, name = 'Recovered (R)', type = 'scatter', mode = 'lines', 
-                  line = list(width = ifelse(input$alpha_n %in% c(1, 2, 5, 10), 0.8,
-                                             ifelse(input$alpha_n == 100, 0.1, 0.05)))) |>
+                  line = list(width = ifelse(input$M2_alpha_n %in% c(1, 2, 5, 10), 0.8,
+                                             ifelse(input$M2_alpha_n == 100, 0.1, 0.05)))) |>
         add_trace(y = ~N, name = 'Total Humans Alive (N)', type = 'scatter', mode = 'lines', 
-                  line = list(width = ifelse(input$alpha_n %in% c(1, 2, 5, 10), 0.8,
-                                             ifelse(input$alpha_n == 100, 0.1, 0.05)))) |>
+                  line = list(width = ifelse(input$M2_alpha_n %in% c(1, 2, 5, 10), 0.8,
+                                             ifelse(input$M2_alpha_n == 100, 0.1, 0.05)))) |>
         add_trace(y = ~CholeraDead, name = 'Cholera Deaths (D<sub>c</sub>)', type = 'scatter', mode = 'lines',
-                  line = list(width = ifelse(input$alpha_n %in% c(1, 2, 5, 10), 0.8,
-                                             ifelse(input$alpha_n == 100, 0.1, 0.05))),
+                  line = list(width = ifelse(input$M2_alpha_n %in% c(1, 2, 5, 10), 0.8,
+                                             ifelse(input$M2_alpha_n == 100, 0.1, 0.05))),
                   visible = 'legendonly') |>
         add_trace(y = ~Total, name = 'Total Humans Alive + Cholera Deaths (N + D<sub>c</sub>)', type = 'scatter', mode = 'lines',
-                  line = list(width = ifelse(input$alpha_n %in% c(1, 2, 5, 10), 0.8,
-                                             ifelse(input$alpha_n == 100, 0.1, 0.05))),
+                  line = list(width = ifelse(input$M2_alpha_n %in% c(1, 2, 5, 10), 0.8,
+                                             ifelse(input$M2_alpha_n == 100, 0.1, 0.05))),
                   visible = 'legendonly') |>
         layout(#annotations = list(text = "Human Population",
           #x = 0.5 , y = 1.05, 
@@ -383,10 +383,10 @@ server <- function(input, output) {
   
   ## 4.2 Sample alpha distribution
   ### 4.2.1 Confirmation of sample distribution parameters selected
-  output$out_alpha_selection <- renderUI(p(HTML(paste("You have chosen to sample <b>", input$alpha_n, "</b> values of \u03b1 using a <b>", input$alpha_disttype, "distribution</b>. Now, <b>", input$alpha_n, "iterations </b> of the SIRSC model across <b>", input$days, "days </b> are plotted below."))))
+  output$M2_out_alpha_selection <- renderUI(p(HTML(paste("You have chosen to sample <b>", input$M2_alpha_n, "</b> values of \u03b1 using a <b>", input$M2_alpha_disttype, "distribution</b>. Now, <b>", input$M2_alpha_n, "iterations </b> of the SIRSC model across <b>", input$M2_days, "days </b> are plotted below."))))
   ### 4.2.2 Histogram to visualise sampled alpha values
   
-  output$out_alpha_dist <- renderPlotly({
+  output$M2_out_alpha_dist <- renderPlotly({
     ggplot_alpha <- ggplot(data = as.data.frame(alpha_samples()),
                            mapping = aes(x = alpha_samples()),
                            histnorm = "probability") +

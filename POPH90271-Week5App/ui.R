@@ -18,10 +18,6 @@ library(deSolve)
 library(lhs)
 library(distributional)
 
-########################## Seed for reproducibility ############################
-
-set.seed(1)
-
 ################################################################################
 ##################################### UI #######################################
 ################################################################################
@@ -218,78 +214,114 @@ page_navbar(
   
   nav_panel(title = "Module 1: Parameter Exploration",
             withMathJax(),
-            # 1.1 Sidebar for parameter and state sliders
+            
+            # 1.1 Sidebar for parameter, state and time window sliders
             layout_sidebar(
               sidebar = sidebar(
-                navset_underline(
-                  nav_panel("States",
-                            helpText("Choose the initial states of the population."),
-                            sliderInput(inputId = "M1_initS",
-                                        label = "\\( S(0) \\): Initial Susceptible",
-                                        min = 0, max = 10000, value = 1000),
-                            sliderInput(inputId = "M1_initI_s",
-                                        label = "\\( I_s(0) \\): Initial Symptomatic",
-                                        min = 0, max = 10000, value = 0),
-                            sliderInput(inputId = "M1_initI_a",
-                                        label = "\\( I_a(0) \\): Initial Asymptomatic",
-                                        min = 0, max = 10000, value = 0),
-                            shinyWidgets::sliderTextInput(inputId = "M1_initC",
-                                                          label = "\\( C(0) \\): Initial Cholera Reservoir Concentration (bacteria / L)",
-                                                          choices = c(0, 1, 10, 10^2, 10^3, 10^4, 10^5, 10^6, 10^7), selected = 10^5, grid = T),
-                            sliderInput(inputId = "M1_W",
-                                        label = "\\( W(0) \\): Water reservoir volume per capita  (L per person)",
-                                        min = 1, max = 100, value = 15)),
-                  nav_panel("Parameters",
-                            helpText("Choose the values of the parameters."),
-                            sliderInput(inputId = "M1_ContamWaterCons_Rate",
-                                        label = "\\( \\alpha \\): Rate of contaminated water consumption (per day)",
-                                        min = 0, max = 2, value = 1, step = 0.01,
-                                        animate = animationOptions(interval = 150, loop = T)),
-                            shinyWidgets::sliderTextInput(inputId = "M1_Cholera_ID50",
-                                                          label = "\\( \\kappa \\): Concentration of cholera yielding 50% chance of infection (bacteria / L)",
-                                                          choices = c(0, 1, 10, 10^2, 10^3, 10^4, 10^5, 10^6, 10^7), selected = 10^5, grid = T),
-                            sliderInput(inputId = "M1_Asymptomatic_Proportion",
-                                        label = "\\( p \\): Proportion of infections that are asymptomatic",
-                                        min = 0, max = 1, value = 0.79, step = 0.01),
-                            sliderInput(inputId = "M1_CholeraDeath_Rate",
-                                        label = "\\( \\mu_c \\) Cholera-induced death rate (per day)",
-                                        min = 0, max = 1, value = 0.5, step = 0.01),
-                            shinyWidgets::sliderTextInput(inputId = "M1_invRecovery_Rate",
-                                                          label = "\\( D_\\text{inf} = \\frac{1}{\\gamma} \\): Duration of infectiousness (days)",
-                                                          choices = c(0.001, 1:21, 1000), selected = 5, grid = T),
-                            shinyWidgets::sliderTextInput(inputId = "M1_invImmunityLoss_Rate",
-                                                          label = "\\( D_\\text{imm} = \\frac{1}{\\omega} \\): Duration of immunity (years)",
-                                                          choices = c(0.001, seq(0.1, 2, 0.1), 1000), selected = 0.8, grid = T),
-                            sliderInput(inputId = "M1_invBirthDeath_Rate",
-                                        label = "\\( L_\\text{H} = \\frac{1}{\\mu} \\): Life expectancy of humans (years)",
-                                        min = 30, max = 100, value = 61, step = 1),
-                            shinyWidgets::sliderTextInput(inputId = "M1_Shedding_Rate",
-                                                          label = "\\( \\sigma \\): Rate of shedding per symptomatic individual (bacteria / day per person)",
-                                                          choices = c(0, 10^5, 10^6, 10^7, 10^8, 10^9, 10^10, 10^11), selected = 10^5, grid = T),
-                            shinyWidgets::sliderTextInput(inputId = "M1_SheddingAsymptomatic_Modifier",
-                                                          label = " \\( \\epsilon \\): Shedding modifier for asymptomatic individuals",
-                                                          choices = c(0, 10^-4, 10^-3, 10^-2, 0.1, 0.2, 0.4, 0.6, 0.8, 1), selected = 10^-3, grid = T),
-                            shinyWidgets::sliderTextInput(inputId = "M1_invCholeraDecay_Rate",
-                                                          label = "\\( L_\\text{C} = \\frac{1}{\\delta} \\): Life expectancy of cholera in the environment (days)",
-                                                          choices = c(0.001, 1:120, 1000), selected = 30, grid = T))
-                )
+                accordion(
+                  accordion_panel("Time Window",
+                                  helpText("Choose the number of days the model will run for."),
+                                  sliderInput(inputId = "M1_days",
+                                              label = "Number of days",
+                                              min = 0, max = 1000, value = 30)),
+                  accordion_panel("States",
+                                  helpText("Choose the initial states of the population."),
+                                  sliderInput(inputId = "M1_initS",
+                                              label = "\\( S(0) \\): Initial Susceptible",
+                                              min = 0, max = 10000, value = 1000),
+                                  sliderInput(inputId = "M1_initI_s",
+                                              label = "\\( I_s(0) \\): Initial Symptomatic",
+                                              min = 0, max = 10000, value = 0),
+                                  sliderInput(inputId = "M1_initI_a",
+                                              label = "\\( I_a(0) \\): Initial Asymptomatic",
+                                              min = 0, max = 10000, value = 0),
+                                  shinyWidgets::sliderTextInput(inputId = "M1_initC",
+                                                                label = "\\( C(0) \\): Initial Cholera Reservoir Concentration (bacteria / L)",
+                                                                choices = c(0, 1, 10, 10^2, 10^3, 10^4, 10^5, 10^6, 10^7), selected = 10^5, grid = T),
+                                  sliderInput(inputId = "M1_W",
+                                              label = "\\( W(0) \\): Water reservoir volume per capita  (L per person)",
+                                              min = 1, max = 100, value = 15)),
+                  accordion_panel("Parameters",
+                                  helpText("Choose the values of the parameters."),
+                                  sliderInput(inputId = "M1_ContamWaterCons_Rate",
+                                              label = "\\( \\alpha \\): Rate of contaminated water consumption (per day)",
+                                              min = 0, max = 2, value = 1, step = 0.01,
+                                              animate = animationOptions(interval = 1000, loop = T)),
+                                  shinyWidgets::sliderTextInput(inputId = "M1_Cholera_ID50",
+                                                                label = "\\( \\kappa \\): Concentration of cholera yielding 50% chance of infection (bacteria / L)",
+                                                                choices = c(0, 1, 10, 10^2, 10^3, 10^4, 10^5, 10^6, 10^7), selected = 10^5, grid = T,
+                                                                animate = animationOptions(interval = 1000, loop = T)),
+                                  sliderInput(inputId = "M1_Asymptomatic_Proportion",
+                                              label = "\\( p \\): Proportion of infections that are asymptomatic",
+                                              min = 0, max = 1, value = 0.79, step = 0.01,
+                                              animate = animationOptions(interval = 1000, loop = T)),
+                                  sliderInput(inputId = "M1_CholeraDeath_Rate",
+                                              label = "\\( \\mu_c \\) Cholera-induced death rate (per day)",
+                                              min = 0, max = 1, value = 0.5, step = 0.01,
+                                              animate = animationOptions(interval = 1000, loop = T)),
+                                  shinyWidgets::sliderTextInput(inputId = "M1_invRecovery_Rate",
+                                                                label = "\\( D_\\text{inf} = \\frac{1}{\\gamma} \\): Duration of infectiousness (days)",
+                                                                choices = c(0.001, 1:21, 1000), selected = 5, grid = T,
+                                                                animate = animationOptions(interval = 1000, loop = T)),
+                                  shinyWidgets::sliderTextInput(inputId = "M1_invImmunityLoss_Rate",
+                                                                label = "\\( D_\\text{imm} = \\frac{1}{\\omega} \\): Duration of immunity (years)",
+                                                                choices = c(0.001, seq(0.1, 2, 0.1), 1000), selected = 0.8, grid = T,
+                                                                animate = animationOptions(interval = 1000, loop = T)),
+                                  sliderInput(inputId = "M1_invBirthDeath_Rate",
+                                              label = "\\( L_\\text{H} = \\frac{1}{\\mu} \\): Life expectancy of humans (years)",
+                                              min = 30, max = 100, value = 61, step = 1,
+                                              animate = animationOptions(interval = 1000, loop = T)),
+                                  shinyWidgets::sliderTextInput(inputId = "M1_Shedding_Rate",
+                                                                label = "\\( \\sigma \\): Rate of shedding per symptomatic individual (bacteria / day per person)",
+                                                                choices = c(0, 10^5, 10^6, 10^7, 10^8, 10^9, 10^10, 10^11), selected = 10^5, grid = T,
+                                                                animate = animationOptions(interval = 1000, loop = T)),
+                                  shinyWidgets::sliderTextInput(inputId = "M1_SheddingAsymptomatic_Modifier",
+                                                                label = " \\( \\epsilon \\): Shedding modifier for asymptomatic individuals",
+                                                                choices = c(0, 10^-4, 10^-3, 10^-2, 0.1, 0.2, 0.4, 0.6, 0.8, 1), selected = 10^-3, grid = T,
+                                                                animate = animationOptions(interval = 1000, loop = T)),
+                                  shinyWidgets::sliderTextInput(inputId = "M1_invCholeraDecay_Rate",
+                                                                label = "\\( L_\\text{C} = \\frac{1}{\\delta} \\): Life expectancy of cholera in the environment (days)",
+                                                                choices = c(0.001, 1:120, 1000), selected = 30, grid = T,
+                                                                animate = animationOptions(interval = 1000, loop = T)))
               )
-            )),
+            ),
+            
+            # 1.2 Main panel cards
+            layout_columns(
+              # 1.2.1 Model time series visualisation for humans
+              card(card_header("Human population over time"),
+                   plotlyOutput("M1_out_plot_human")),
+              # 1.2.2 Model time series visualisation for force of infection
+              card(card_header("Force of infection \u03BB over time"),
+                   plotlyOutput("M1_out_plot_lambda")),
+              # 1.2.3 Model time series visualisation for cholera concentration
+              card(card_header("Cholera concentration over time"),
+                   plotlyOutput("M1_out_plot_cholera")),
+            col_widths = c(12, 6, 6),
+            row_heights = c(2, 1)))),
   
   #################### Module 2 UI ####################
   
-  nav_panel(title = "Module 2: Single Parameter Sampling", p("Second page content.")),
+  nav_panel(title = "Module 2: Single Parameter Sampling",
+            withMathJax(),
+            
+            # 2.1 Sidebar for parameter, state and time window sliders
+            
+            # 2.2 Main panel cards
+  ),
   
   #################### Module 3 UI ####################
   
   nav_panel(title = "Module 3: Multiple Parameters",
             withMathJax(),
+            
             # 3.1 Sidebar for parameter and state sliders
             layout_sidebar(
               sidebar = sidebar(
                 open = "closed",
-                navset_underline(
-                  nav_panel("States",
+                accordion(
+                  open = "Parameters",
+                  accordion_panel("States",
                             helpText("Choose the initial states of the population."),
                             #checkboxInput(inputId = "M3_uncertain_initC", # !Checkboxes can be used to determine what states are uncertain!
                             #              label = "Uncertain \\( C(0) \\)?", value = TRUE),
@@ -308,7 +340,7 @@ page_navbar(
                             sliderInput(inputId = "M3_W",
                                         label = "\\( W(0) \\): Water reservoir volume per capita  (L per person)",
                                         min = 1, max = 100, value = 15)),
-                  nav_panel("Parameters",
+                  accordion_panel("Parameters",
                             tags$div("We now sample combinations of \\( \\alpha \\) and \\( \\mu_c \\) using the sampling distributions and method set on the right"),
                             helpText("Choose the values of the other parameters."),
                             #checkboxInput(inputId = "M3_uncertain_alpha",
@@ -344,7 +376,8 @@ page_navbar(
                                                           choices = c(0.001, 1:120, 1000), selected = 30, grid = T))
                 )
               ),
-              # 3.2 Right-hand cards
+              
+              # 3.2 Main panel cards
               layout_columns(
                 # 3.2.1 Choosing sampling distribution type, sample size and time window
                 card(card_header("Sampling distribution"),
@@ -361,6 +394,7 @@ page_navbar(
                     #            choices = c("Uniform", "Normal", "Beta", "Binomial", "Negative Binomial", "Poisson")),
                     #disttype_tabs_initC
                     ),
+                
                 # 3.2.2 Choosing sampling distribution 
                 card(card_header("Sampling method"),
                      selectInput(inputId = "M3_sampling_method",
@@ -371,8 +405,10 @@ page_navbar(
                 # 3.2.3 Visualising sample distribution
                 card(card_header("Samples in parameter space"),
                      plotlyOutput("M3_out_parameter_space")),
-                card(uiOutput("M3_out_sampling_method_selection"), # 3.2.3.1 Summary of selection
-                     plotlyOutput("M3_out_plot")), # 3.2.3.2 Model Visualisation
+                
+                # 3.2.4 Summary of selection and Model time series visualisation
+                card(uiOutput("M3_out_sampling_method_selection"),
+                     plotlyOutput("M3_out_plot")), 
                 col_widths = c(3, 3, 6, 12),
                 row_heights = c(2, 3))
             )
