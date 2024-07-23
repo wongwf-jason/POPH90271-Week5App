@@ -1,3 +1,15 @@
+######## POPH90271 IDM: Uncertainty and Sensitivity Analysis Playground ########
+
+# This Shiny app was created in 2024 by Mr Jason Wong (MD4/MPH Candidate, The
+# University of Melbourne), under the supervision of Dr Trish Campbell (The
+# Peter Doherty Institute for Infection and Immunity). It is intended to be used
+# with Dr Campbell's second semester subject POPH90271 Infectious Diseases
+# Modelling.
+
+# The model used in this app was adapted from Andrews, J. R., & Basu, S. (2011). 
+# Transmission dynamics and control of cholera in Haiti: an epidemic model.
+# Lancet, 377(9773), 1248–1255.
+
 ############################### Library loading ################################
 
 # Shiny packages
@@ -251,7 +263,7 @@ page_navbar(
                               h4('App Overview'),
                               p(HTML(paste('In <b>Module 1: Parameter Exploration</b>, we introduce a <b>cholera outbreak</b> \uD83E\uDDA0,
                                            and visualise how changing various parameters and state inputs affects the model&apos;s outputs,'))),
-                              p(HTML(paste('In <b>Module 2: Single Parameter Sampling </b>, we introduce various probability distributions
+                              p(HTML(paste('In <b>Module 2: Single Parameter Sampling</b>, we introduce various probability distributions
                                            (<b>sampling distributions</b> \uD83D\uDCCA) with which we can use to sample a single parameter we are uncertain of.'))),
                               p(HTML(paste('In <b>Module 3: Multiple Parameters</b>, we sample more than one parameter and introduce different
                                            techniques (<b>sampling methods</b> \uD83D\uDD0D) to efficiently explore the sample space.<br><br>'))),
